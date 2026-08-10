@@ -60,9 +60,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Tag::class, 'users_tags_preferences', 'user_id', 'tag_id');
     }
 
-    public function isAdmin(): bool
+   public function isAdmin(): bool
     {
-    return (bool) $this->is_admin;
+    return (bool) $this->is_admin; // ✅ null diventa false
     }
 
 
