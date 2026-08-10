@@ -1,0 +1,274 @@
+/* forum.css */
+
+/* Container principale */
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Titoli */
+h1, h2, h3, h4 {
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+/* Elenco tag (generi) */
+.d-flex.flex-wrap.gap-2 {
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.d-flex.flex-wrap.gap-2 a.btn {
+  background: #3498db;
+  border: none;
+  color: white ;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 6px rgb(52 152 219 / 0.4);
+  text-decoration: none;
+}
+
+.d-flex.flex-wrap.gap-2 a.btn:hover {
+  background: #2980b9;
+  box-shadow: 0 4px 12px rgb(41 128 185 / 0.6);
+}
+
+/* Singolo post */
+.post {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.post:hover {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+.post h4 {
+  margin-bottom: 0.5rem;
+  color: #34495e;
+}
+
+.post p {
+  line-height: 1.5;
+  color: #555;
+}
+
+.post small {
+  display: block;
+  margin-top: 0.8rem;
+  color: #888;
+  font-style: italic;
+}
+
+/* Messaggi di successo */
+.success-message {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 0.8rem 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+/* Form per nuovo post */
+form {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.1);
+}
+
+form input[type="text"],
+form textarea {
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  resize: vertical;
+}
+
+form input[type="text"]:focus,
+form textarea:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+form button {
+  margin-top: 1rem;
+  padding: 0.7rem 1.5rem;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #1e8449;
+}
+
+/* Link login */
+a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Messaggio quando non ci sono post */
+.empty-message {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  margin-top: 2rem;
+}
+/* === Glitch Button Custom === */
+/* Glitch button - adattato da Uiverse per <a> PER I BOTTONI DEL GENERE */
+
+.glitch-btn {
+  position: relative;
+  display: inline-block;
+  padding: 16px 20px;
+  font-size: 18px;
+  background: linear-gradient(45deg, transparent 5%, #ff013c 5%);
+  border: none;
+  color: #fff;
+  letter-spacing: 3px;
+  line-height: 1;
+  box-shadow: 6px 0px 0px #00e6f6;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  text-align: center;
+}
+
+.glitch-btn::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 3%, #00e6f6 3%, #00e6f6 5%, #ff013c 5%);
+  text-shadow: -3px -3px 0px #f8f005, 3px 3px 0px #00e6f6;
+  clip-path: inset(50% 50% 50% 50%);
+  transition: all 0.3s ease;
+  z-index: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glitch-btn:hover::after {
+  animation: glitch 1s steps(2, end);
+}
+
+@keyframes glitch {
+  0% {
+    clip-path: inset(80% -6px 0 0);
+    transform: translate(-20px, -10px);
+  }
+  10% {
+    clip-path: inset(10% -6px 85% 0);
+    transform: translate(10px, 10px);
+  }
+  20% {
+    clip-path: inset(50% -6px 30% 0);
+    transform: translate(-10px, 10px);
+  }
+  30% {
+    clip-path: inset(10% -6px 85% 0);
+    transform: translate(0px, 5px);
+  }
+  40% {
+    clip-path: inset(40% -6px 43% 0);
+    transform: translate(-5px, 0px);
+  }
+  50% {
+    clip-path: inset(10% -6px 85% 0);
+    transform: translate(5px, 0px);
+  }
+  60% {
+    clip-path: inset(40% -6px 43% 0);
+    transform: translate(5px, 10px);
+  }
+  70% {
+    clip-path: inset(50% -6px 30% 0);
+    transform: translate(-10px, 10px);
+  }
+  80% {
+    clip-path: inset(80% -6px 5% 0);
+    transform: translate(20px, -10px);
+  }
+  90% {
+    clip-path: inset(80% -6px 0 0);
+    transform: translate(-10px, 0px);
+  }
+  100% {
+    clip-path: inset(80% -6px 0 0);
+    transform: translate(0);
+  }
+}
+.glitch-title-simple {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  background-color: black ;
+  display: inline-block;
+  padding: 10px 20px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  box-shadow: 6px 0 0 #00e6f6;
+  cursor: default;
+  user-select: none; /* evita selezioni accidentali */
+}
+.delete-comment-btn {
+  all: unset;
+  color: red;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+button {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  padding: 10px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(37, 117, 252, 0.5);
+  transition: background 0.3s ease, transform 0.2s ease;
+                  
+}
+
+button:hover {
+  background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+  transform: scale(1.05);
+}
+.flex-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px; /* se vuoi distanziare dal contenuto sopra */
+}

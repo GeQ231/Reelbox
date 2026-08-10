@@ -1,0 +1,63 @@
+
+
+
+.navbar-dark {
+    background-color: #000000 !important; /* nero puro */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.8);
+  }
+  
+  
+  .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #e63946; /* un rosso vivo */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    user-select: none;
+    transition: color 0.3s ease;
+  }
+  
+  .navbar-brand:hover {
+    color: #f44336; /* rosso un po' più chiaro al passaggio */
+    text-decoration: none;
+  }
+  
+  .logo-navbar {
+    filter: drop-shadow(0 0 2px rgba(230, 57, 70, 0.8));
+    border-radius: 6px;
+    transition: transform 0.3s ease;
+  }
+  
+  .logo-navbar:hover {
+    transform: scale(1.1);
+  }
+  
+  .brand-text {
+    line-height: 1;
+    color: red;
+  }
+  
+  /* Se vuoi rendere la navbar un po’ più alta */
+  .navbar {
+    min-height: 60px;
+    background-color: #000000;
+  }
+  
+  /* Navbar nav link stilizzati */
+  .navbar-dark .nav-link {
+    color: #bbb;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  
+  .navbar-dark .nav-link:hover {
+    color: #e63946;
+  }
+
+.web-logo{
+    width:32px; 
+    height:32px; 
+    margin-right:8px;
+}
+
+
+  

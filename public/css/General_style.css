@@ -1,0 +1,51 @@
+/* Sfondo generale */
+body {
+    background-color: #1e1e2f !important;
+}
+
+/* Sezioni (box non principali) */
+.color_rect {
+    background-color: #2d2d44 !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+    color: #e0e0e0 !important;
+}
+
+/* Titoli/sottotitoli */
+.title {
+    color: #8be9fd !important;
+    text-align: center;
+}
+
+/* Bottoni: inserimento dati */
+.data_submit_button {
+    background-color: #4caf50;
+    color: white;
+}
+.data_submit_button:hover {
+    background-color: #81c784;
+}
+
+/* Bottoni: ricerca */
+.data_search_button {
+    background-color: #42a5f5 !important;
+    color: white !important;
+}
+.data_search_button:hover {
+    background-color: #90caf9 !important;
+}
+
+/* Bottoni: eliminazione/logout */
+.data_delete_button {
+    background-color: #ef5350 !important;
+    color: white !important;
+}
+.data_delete_button:hover {
+    background-color: #e57373 !important;
+}
+
+
+
+
+
+
+

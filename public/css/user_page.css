@@ -1,0 +1,122 @@
+/* Container principale */
+.profile-container {
+  max-width: 500px;
+  margin: 3rem auto;
+  background: #2a0d0d;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+}
+
+/* Titolo profilo */
+.profile-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ff3b3b;
+}
+
+/* Informazioni utente */
+.profile-info p {
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid #ff4d4d44;
+  padding-bottom: 6px;
+}
+
+/* Sezione preferenze */
+.preferences-section {
+  margin: 2rem 0;
+}
+
+.preferences-toggle {
+  background: #ff3b3b;
+  border: none;
+  padding: 12px 20px;
+  width: 100%;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.preferences-toggle:hover {
+  background-color: #ff1a1a;
+}
+
+.preferences-toggle i {
+  transition: transform 0.3s ease;
+}
+
+.preferences-toggle i.rotate {
+  transform: rotate(180deg);
+}
+
+/* Lista preferenze */
+.preferences-list {
+  margin-top: 1rem;
+  background: #400606;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+  color: #ffdede;
+  font-weight: 600;
+}
+
+.preferences-list ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.preferences-list ul li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ff4d4d44;
+}
+
+.preferences-list ul li:last-child {
+  border-bottom: none;
+}
+
+.no-preferences {
+  font-style: italic;
+  color: #ff9999;
+  padding-left: 0.3rem;
+}
+
+/* Nascondi lista */
+.hidden {
+  display: none;
+}
+
+/* Bottone logout */
+.logout-btn {
+  display: block;
+  width: 100%;
+  background: #ff1a1a;
+  color: white;
+  font-weight: 900;
+  padding: 12px 0;
+  border-radius: 30px;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  margin-top: 2.5rem;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.logout-btn:hover {
+  background: #b30000;
+}
