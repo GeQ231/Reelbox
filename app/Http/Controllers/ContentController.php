@@ -25,38 +25,38 @@ class ContentController extends Controller
     }
 
     public function show(Content $content)
-    {
-        Log::info('Accessed content show page', ['content_id' => $content->id]);
-        $content = Content::with('tags')->findOrFail($content->id);
+{
+    Log::info('Accessed content show page', ['content_id' => $content->id]);
+    $content = Content::with('tags')->findOrFail($content->id);
 
-        // Fetch trama da Wikipedia
-        try {
-            if (empty($content->descrizione)) {
-                $plot = $this->fetchWikipediaPlot($content);
-                if ($plot) {
-                    $content->descrizione = $plot;
-                    $content->save();
-                }
+    // ✅ FIX - usa 'descrizione' invece di 'trama'
+    try {
+        if (empty($content->descrizione)) {
+            $plot = $this->fetchWikipediaPlot($content);
+            if ($plot) {
+                $content->descrizione = $plot;
+                $content->save();
             }
-        } catch (\Exception $e) {
-            Log::error('Errore Wikipedia: ' . $e->getMessage());
         }
-
-        // Fetch trailer da YouTube
-        try {
-            if (empty($content->trailer_url)) {
-                $trailer = $this->findYouTubeTrailerLink($content->titolo);
-                if ($trailer) {
-                    $content->trailer_url = $trailer;
-                    $content->save();
-                }
-            }
-        } catch (\Exception $e) {
-            Log::error('Errore YouTube: ' . $e->getMessage());
-        }
-
-        return view('films.show', compact('content'));
+    } catch (\Exception $e) {
+        Log::error('Errore Wikipedia: ' . $e->getMessage());
     }
+
+    // ✅ FIX - usa 'trailer_url' (già corretto)
+    try {
+        if (empty($content->trailer_url)) {
+            $trailer = $this->findYouTubeTrailerLink($content->titolo);
+            if ($trailer) {
+                $content->trailer_url = $trailer;
+                $content->save();
+            }
+        }
+    } catch (\Exception $e) {
+        Log::error('Errore YouTube: ' . $e->getMessage());
+    }
+
+    return view('films.show', compact('content'));
+}
 
     private function fetchWikipediaPlot($content)
     {

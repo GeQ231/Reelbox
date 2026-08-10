@@ -11,14 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-
-        // ✅ FIX BUG 3 - registrazione middleware alias
+        // ✅ Solo admin è custom, auth e guest sono già built-in in Laravel 11!
         $middleware->alias([
-            'auth'  => \App\Http\Middleware\Authenticate::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
-            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);
-
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

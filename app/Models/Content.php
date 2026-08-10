@@ -8,48 +8,45 @@ class Content extends Model
 {
     protected $table = 'contents';
 
+    // ✅ FIX - nomi colonne corretti dal DB
     protected $fillable = [
         'titolo',
         'categoria',
-        'trama',
-        'image',
+        'descrizione', // ✅ era 'trama'
+        'poster',      // ✅ era 'image'
+        'trailer_url', // ✅ aggiunto
         'regista',
         'anno',
         'created_at',
         'updated_at'
     ];
 
-    // Scope per filtrare solo film
     public function scopeFilms($query)
     {
         return $query->where('categoria', 'film');
     }
 
-    // Scope per filtrare solo serie TV
     public function scopeTvShows($query)
     {
         return $query->where('categoria', 'tv');
     }
 
-    // ✅ AGGIUNTO - mancava! Necessaria per withCount('likes')
+    // ✅ FIX - usa Preference con liked=true
     public function likes()
     {
-        return $this->hasMany(\App\Models\Like::class);
+        return $this->hasMany(\App\Models\Preference::class)->where('liked', true);
     }
 
-    // Gestione dei preferiti 
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
     }
 
-    // Gestione dei tag
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
     }
 
-    // Gestione dei commenti
     public function comments()
     {
         return $this->hasMany(\App\Models\Comment::class);
