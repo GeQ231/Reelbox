@@ -3,120 +3,110 @@
 namespace App\Http\Controllers;
 
 use App\Models\Content;
-use App\Models\Like;
+use App\Models\Preference;
 use Illuminate\Http\Request;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-
 class FeedController extends Controller
 {
-    //serve per gesire il feed dell utente (determina quali contenuti mostrare)
-
-
     public function search(Request $request)
-{
+    {
+        Log::info("Search method called.");
 
-    Log::info("Search method called.");
+        $query     = $request->query('query');
+        $tipologia = $request->query('tipologia');
+        $anno      = $request->query('anno');
+        $genere    = $request->query('genere');
+        $userId    = $request->query('user_id');
 
-    // Leggi i parametri dalla query string
-    $query = $request->query('query');
-    $tipologia = $request->query('tipologia');
-    $anno = $request->query('anno');
-    $genere = $request->query('genere');
-    $userId = $request->query('user_id');
+        Log::info("Search parameters: ", $request->all());
 
-    Log::info("Search parameters: ", $request->all());
+        $contentsQuery = Content::withCount('likes');
 
-    // Costruisco la query di base
-    $contentsQuery = Content::withCount('likes');
+        if ($query || $tipologia || $anno || $genere) {
+            Log::info("Applying filters to Content query...");
 
-    // Se almeno un filtro è presente, applico filtri
-    if ($query || $tipologia || $anno || $genere) {
-        Log::info("Applying filters to Content query...");
-        
-        //la barra di ricerca effettua la ricerca su titolo e trama
-        if ($query) {
-            $contentsQuery->where('titolo', 'like', "%{$query}%")
-                          ->orWhere('trama', 'like', "%{$query}%");
-        }
+            // ✅ FIX BUG 7 - orWhere raggruppato correttamente
+            if ($query) {
+                $contentsQuery->where(function($q) use ($query) {
+                    $q->where('titolo', 'like', "%{$query}%")
+                      ->orWhere('trama', 'like', "%{$query}%");
+                });
+            }
 
-        if ($tipologia) {
-            // film o serie tv
-            $contentsQuery->where('categoria', $tipologia);
-        }
+            if ($tipologia) {
+                $contentsQuery->where('categoria', $tipologia);
+            }
 
-        if ($anno) {
-            // anno
-            $contentsQuery->where('anno', $anno);
-        }
+            if ($anno) {
+                $contentsQuery->where('anno', $anno);
+            }
 
-        if ($genere) {
-            $contentsQuery->whereHas('tags', function ($query) use ($genere) {
-                $query->where('tags.id', $genere);
-            });
-        }
-        
+            if ($genere) {
+                $contentsQuery->whereHas('tags', function ($q) use ($genere) {
+                    $q->where('tags.id', $genere);
+                });
+            }
 
-        // Prendi un contenuto random fra quelli filtrati
-        $count = $contentsQuery->count();
-        Log::info("Filtered content count: $count");
-        $offset = rand(0, max(0, $count - 1));
-        Log::info("Random offset: $offset");
-        $content = $contentsQuery->skip($offset)->first();
-        Log::info("Random content selected: " . ($content->titolo ?? 'none'));
+            $count = $contentsQuery->count();
+            Log::info("Filtered content count: $count");
 
+            if ($count === 0) {
+                return response()->json([
+                    'error' => 'Nessun contenuto corrisponde ai criteri di ricerca'
+                ], 404);
+            }
 
+            $offset  = rand(0, max(0, $count - 1));
+            $content = $contentsQuery->skip($offset)->first();
+            Log::info("Random content selected: " . ($content->titolo ?? 'none'));
 
-        if (!$content) {
-            return response()->json(['error' => 'Nessun contenuto corrisponde ai criteri di ricerca'], 404);
-        }
-
-    } else {
-        // Nessun filtro: prendi un contenuto casuale
-        $content = $contentsQuery->inRandomOrder()->first();
-
-        if (!$content) {
-            return response()->json(['error' => 'Nessun contenuto disponibile'], 404);
-        }
-    }
-
-    // Se manca, allora faccio fetch dell'immagine
-    if (empty($content->image)) {
-        $imageUrl = $this->fetchWikipediaImage($content->titolo);
-        if ($imageUrl) {
-            $content->image = $imageUrl;
-            $content->save();
-            Log::info("Fetched and saved image for {$content->titolo}: {$imageUrl}");
         } else {
-            Log::warning("No image found for: {$content->titolo}");
+            // Nessun filtro: contenuto casuale
+            $content = $contentsQuery->inRandomOrder()->first();
+
+            if (!$content) {
+                return response()->json([
+                    'error' => 'Nessun contenuto disponibile'
+                ], 404);
+            }
         }
+
+        // Fetch immagine Wikipedia se mancante
+        if (empty($content->image)) {
+            $imageUrl = $this->fetchWikipediaImage($content->titolo);
+            if ($imageUrl) {
+                $content->image = $imageUrl;
+                $content->save();
+                Log::info("Fetched and saved image for {$content->titolo}: {$imageUrl}");
+            } else {
+                Log::warning("No image found for: {$content->titolo}");
+            }
+        }
+
+        // ✅ FIX BUG 6 - user_has_liked usa Preference correttamente
+        $userHasLiked = false;
+        if ($userId) {
+            $userHasLiked = Preference::where('content_id', $content->id)
+                ->where('user_id', $userId)
+                ->where('liked', true)
+                ->exists();
+        }
+
+        // Fetch trama Wikipedia
+        $WikipediaPlot = $this->fetchWikipediaPlot($content->titolo);
+
+        return response()->json([
+            'id'             => $content->id,
+            'titolo'         => $content->titolo,
+            'trama'          => $WikipediaPlot,
+            'image'          => $content->image,
+            'likes_count'    => $content->likes_count,
+            'user_has_liked' => $userHasLiked,
+        ]);
     }
-
-
-    $userHasLiked = false;
-
-    if ($userId) {
-        $userHasLiked = $content->favoritedBy()->where('user_id', $userId)->exists();
-    }
-    //Ricerca su wikipedia, diversa dall'altra perchè qua si cerca un summary, non la trama intera
-    $WikipediaPlot = $this->fetchWikipediaPlot($content->titolo);
-    
-
-    return response()->json([
-        'id' => $content->id,
-        'titolo' => $content->titolo,
-        'trama' => $WikipediaPlot,
-        'image' => $content->image,
-        'likes_count' => $content->likes_count,
-        'user_has_liked' => $userHasLiked,
-    ]);
-}
-
-
-
-    //funzione che mi ritorna i tags per la select della home
 
     public function getTags()
     {
@@ -124,18 +114,14 @@ class FeedController extends Controller
         return response()->json($tags);
     }
 
-
-
     private function fetchWikipediaImage($title)
     {
-        //Possibili varianti del film da cercare
         $variants = [
             "$title (film)",
             "$title (movie)",
             $title
         ];
 
-        // Provo con ogni variante
         foreach ($variants as $variant) {
             $image = $this->getImageFromWikipediaSummary($variant);
             if ($image) {
@@ -144,12 +130,11 @@ class FeedController extends Controller
             }
         }
 
-        // Fallback: cferco su wikipedia per il miglior match
         $searchedTitle = $this->searchWikipediaTitle($title);
         if ($searchedTitle) {
             $image = $this->getImageFromWikipediaSummary($searchedTitle);
             if ($image) {
-                Log::info("Fetched image for '$title' via search match '$searchedTitle': $image");
+                Log::info("Fetched image for '$title' via search: $image");
                 return $image;
             }
         }
@@ -161,6 +146,8 @@ class FeedController extends Controller
     private function getImageFromWikipediaSummary($title)
     {
         $url = "https://en.wikipedia.org/api/rest_v1/page/summary/" . urlencode($title);
+
+        // ✅ FIX BUG 4 - timeout aggiunto
         $response = Http::timeout(3)->get($url);
 
         if ($response->successful()) {
@@ -173,27 +160,19 @@ class FeedController extends Controller
 
     private function searchWikipediaTitle($query)
     {
-        //Identica a quella della pagina del singolo film
-        $url = "https://en.wikipedia.org/w/api.php";
-        $params = [
-            'action' => 'query',
-            'list' => 'search',
+        $response = Http::timeout(3)->get("https://en.wikipedia.org/w/api.php", [
+            'action'   => 'query',
+            'list'     => 'search',
             'srsearch' => $query,
-            'format' => 'json'
-        ];
-
-        $response = Http::timeout(3)->get($url, $params);
+            'format'   => 'json'
+        ]);
 
         if ($response->successful()) {
-            $results = $response->json();
-            return $results['query']['search'][0]['title'] ?? null;
+            return $response->json()['query']['search'][0]['title'] ?? null;
         }
 
         return null;
     }
-
-
-
 
     private function fetchWikipediaPlot($title)
     {
@@ -204,15 +183,15 @@ class FeedController extends Controller
         ];
 
         foreach ($variants as $variant) {
-            //Identica a quella della pagina del singolo film
-            $response = Http::get('https://en.wikipedia.org/w/api.php', [
-                'action' => 'query',
-                'prop' => 'extracts',
-                'format' => 'json',
-                'exintro' => true,
+            // ✅ FIX BUG 4 - timeout aggiunto
+            $response = Http::timeout(3)->get('https://en.wikipedia.org/w/api.php', [
+                'action'      => 'query',
+                'prop'        => 'extracts',
+                'format'      => 'json',
+                'exintro'     => true,
                 'explaintext' => true,
-                'redirects' => true,
-                'titles' => $variant,
+                'redirects'   => true,
+                'titles'      => $variant,
             ]);
 
             if ($response->successful()) {

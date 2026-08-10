@@ -11,7 +11,7 @@ class ContentController extends Controller
 {
     public function index(Request $request)
     {
-        $tipo = $request->query('categoria');
+        $tipo  = $request->query('categoria');
         $query = Content::query();
 
         if ($tipo === 'film') {
@@ -29,7 +29,7 @@ class ContentController extends Controller
         Log::info('Accessed content show page', ['content_id' => $content->id]);
         $content = Content::with('tags')->findOrFail($content->id);
 
-        // Fetch della trama da Wikipedia in ITALIANO con protezione errori
+        // Fetch trama da Wikipedia
         try {
             if (empty($content->descrizione)) {
                 $plot = $this->fetchWikipediaPlot($content);
@@ -42,7 +42,7 @@ class ContentController extends Controller
             Log::error('Errore Wikipedia: ' . $e->getMessage());
         }
 
-        // Fetch del trailer da YouTube con protezione errori
+        // Fetch trailer da YouTube
         try {
             if (empty($content->trailer_url)) {
                 $trailer = $this->findYouTubeTrailerLink($content->titolo);
@@ -58,7 +58,7 @@ class ContentController extends Controller
         return view('films.show', compact('content'));
     }
 
-   private function fetchWikipediaPlot($content)
+    private function fetchWikipediaPlot($content)
     {
         $titleVariants = [
             "{$content->titolo} ({$content->anno} film)",
@@ -69,6 +69,7 @@ class ContentController extends Controller
 
         // 1. Prova prima in ITALIANO
         foreach ($titleVariants as $title) {
+            // ✅ FIX - passa $lang correttamente
             $summary = $this->getWikipediaSummary($title, 'it');
             if ($summary) return $summary;
         }
@@ -78,7 +79,7 @@ class ContentController extends Controller
             return $this->getWikipediaSummary($searchTitle, 'it');
         }
 
-        // 2. FALLBACK: Se in italiano non trova nulla, prova in INGLESE (fondamentale per film come "Taking Earth")
+        // 2. FALLBACK in INGLESE
         foreach ($titleVariants as $title) {
             $summary = $this->getWikipediaSummary($title, 'en');
             if ($summary) return $summary;
@@ -92,17 +93,17 @@ class ContentController extends Controller
         return null;
     }
 
-    private function getWikipediaSummary($title)
+    // ✅ FIX - aggiunto parametro $lang con default 'it'
+    private function getWikipediaSummary($title, $lang = 'it')
     {
-        // NOTA: it.wikipedia.org per cercare in italiano
-        $response = Http::get('https://it.wikipedia.org/w/api.php', [
-            'action' => 'query',
-            'prop' => 'extracts',
-            'format' => 'json',
-            'exintro' => true,
+        $response = Http::timeout(5)->get("https://{$lang}.wikipedia.org/w/api.php", [
+            'action'      => 'query',
+            'prop'        => 'extracts',
+            'format'      => 'json',
+            'exintro'     => true,
             'explaintext' => true,
-            'redirects' => true,
-            'titles' => $title,
+            'redirects'   => true,
+            'titles'      => $title,
         ]);
 
         if ($response->successful()) {
@@ -115,13 +116,14 @@ class ContentController extends Controller
         return null;
     }
 
-    private function searchWikipediaTitle($query)
+    // ✅ FIX - aggiunto parametro $lang con default 'it'
+    private function searchWikipediaTitle($query, $lang = 'it')
     {
-        $response = Http::get('https://it.wikipedia.org/w/api.php', [
-            'action' => 'query',
-            'list' => 'search',
+        $response = Http::timeout(5)->get("https://{$lang}.wikipedia.org/w/api.php", [
+            'action'   => 'query',
+            'list'     => 'search',
             'srsearch' => $query,
-            'format' => 'json',
+            'format'   => 'json',
         ]);
 
         if ($response->successful()) {
@@ -136,10 +138,10 @@ class ContentController extends Controller
         $apiKey = env('YOUTUBE_API_KEY');
         if (!$apiKey) return null;
 
-        $query = urlencode("{$titolo} official trailer");
-        $url = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q={$query}&key={$apiKey}";
+        $query    = urlencode("{$titolo} official trailer");
+        $url      = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q={$query}&key={$apiKey}";
 
-        $response = Http::get($url);
+        $response = Http::timeout(5)->get($url);
 
         if ($response->successful()) {
             $videoId = $response->json()['items'][0]['id']['videoId'] ?? null;
