@@ -21,3 +21,13 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+/database/database.sqlite
+Thumbs.db
+.DS_Store
+storage/app/netflix_titles.csv
+storage/movies.csv
+screenshots/

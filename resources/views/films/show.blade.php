@@ -82,12 +82,22 @@
                   style="background:transparent; border:none; padding:0; box-shadow:none;">
                 @csrf
                 <textarea
-                    name="body"
-                    rows="3"
-                    placeholder="Scrivi un commento..."
-                    required
-                    style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius:8px; color:white; padding:10px; resize:vertical;">
-                </textarea>
+                            name="body"
+                            rows="3"
+                            placeholder="Scrivi un commento..."
+                            required
+                            style="
+                                width:100%;
+                                background:rgba(255,255,255,0.05);
+                                border:1px solid rgba(255,255,255,0.2);
+                                border-radius:8px;
+                                color:white;
+                                padding:10px;
+                                resize:vertical;
+                                text-align:left !important;
+                                direction:ltr !important;
+                            ">
+                        </textarea>
                 <button type="submit" class="btn btn-primary mt-2">
                     <i class="bi bi-send me-1"></i> Commenta
                 </button>

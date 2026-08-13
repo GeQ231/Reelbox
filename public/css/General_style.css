@@ -115,6 +115,8 @@ body::before {
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
     animation: scanline 3s linear infinite;
+    pointer-events: none !important; /* ✅ AGGIUNTO */
+    z-index: 0 !important; /* ✅ AGGIUNTO */
 }
 
 @keyframes scanline {
