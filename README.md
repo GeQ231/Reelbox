@@ -77,6 +77,8 @@ Include un **forum** per discutere con altri utenti e un sistema di **preferiti*
 ### 👤 Profilo
 ![Profile](https://raw.githubusercontent.com/GeQ231/Reelbox/main/screenshots/profile.png)
 
+---
+
 ## 🛠️ Tech Stack
 
 | Categoria | Tecnologia |
