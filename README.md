@@ -66,18 +66,16 @@ Include un **forum** per discutere con altri utenti e un sistema di **preferiti*
 ## 📸 Screenshots
 
 ### 🏠 Home - Esplora Contenuti
-![Home](screenshots/home.png)
+![Home](https://raw.githubusercontent.com/GeQ231/Reelbox/main/screenshots/home.png)
 
 ### 💬 Forum
-![Forum](screenshots/forum.png)
+![Forum](https://raw.githubusercontent.com/GeQ231/Reelbox/main/screenshots/forum.png)
 
 ### 🎬 Pagina Film
-![Film](screenshots/film.png)
+![Film](https://raw.githubusercontent.com/GeQ231/Reelbox/main/screenshots/film.png)
 
 ### 👤 Profilo
-![Profile](screenshots/profile.png)
-
----
+![Profile](https://raw.githubusercontent.com/GeQ231/Reelbox/main/screenshots/profile.png)
 
 ## 🛠️ Tech Stack
 
