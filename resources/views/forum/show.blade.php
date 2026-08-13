@@ -20,14 +20,12 @@
 
         {{-- Eliminazione post --}}
         @if (Auth::check() && (Auth::id() === $post->user_id || Auth::user()->isAdmin()))
-        <form method="POST" action="{{ route('forum.posts.destroy', $post) }}" style="height:0.2em;">
-            @csrf
-            @method('DELETE')
-            <div class="flex-right">
-                <button type="submit" class="button" aria-label="Elimina post">
-                    <i class="bi bi-trash3"></i> Elimina
+            <form method="POST" action="{{ route('forum.posts.destroy', $post) }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="neon-delete-btn" title="Elimina post">
+                    <i class="bi bi-trash3"></i>
                 </button>
-            </div>
         </form>
         @endif
 

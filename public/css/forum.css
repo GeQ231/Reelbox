@@ -192,3 +192,25 @@
     cursor: default;
     user-select: none;
 }
+/* ============ BOTTONE ELIMINA NEON ============ */
+.neon-delete-btn {
+    background: transparent !important;
+    border: 1px solid #cf30aa !important;
+    color: #cf30aa !important;
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+}
+
+.neon-delete-btn:hover {
+    background: rgba(207, 48, 170, 0.2) !important;
+    box-shadow: 0 0 10px #cf30aa, 0 0 20px #cf30aa !important;
+    transform: translateY(-2px) !important;
+    color: #ff6bda !important;
+}
