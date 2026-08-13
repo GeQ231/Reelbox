@@ -41,4 +41,16 @@ class FavoriteController extends Controller
             'favorited' => $favorited
         ]);
     }
+    public function index()
+{
+    $user = Auth::user();
+
+    $preferiti = Preference::where('user_id', $user->id)
+        ->where('liked', true)
+        ->with('content.tags')
+        ->latest()
+        ->get();
+
+    return view('profile.favorites', compact('preferiti'));
+}
 }

@@ -1,3 +1,5 @@
+@extends('layouts.app')  {{-- ✅ PRIMA RIGA! --}}
+
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/General_style.css') }}">
 <style>
@@ -9,7 +11,6 @@
 </style>
 @endsection
 
-@extends('layouts.app')
 @section('content')
 <div class="container">
     <h2 class="mb-4 title">Login</h2>
@@ -29,6 +30,12 @@
             <div class="error-msg" id="passwordError"></div>
         </div>
 
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
         <button type="submit" class="btn btn-primary data_submit_button">Accedi</button>
     </form>
 
@@ -37,16 +44,14 @@
 
 <script>
 document.getElementById('loginForm').addEventListener('submit', function(event) {
-    // reset errori
     document.getElementById('emailError').textContent = '';
     document.getElementById('passwordError').textContent = '';
 
     let valid = true;
 
-    const email = document.getElementById('email').value.trim();
+    const email    = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
 
-    // Controllo che email contenga almeno una '@' e almeno un '.'
     if (!email) {
         document.getElementById('emailError').textContent = 'L\'email è obbligatoria.';
         valid = false;
@@ -60,10 +65,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         valid = false;
     }
 
-    if (!valid) {
-        event.preventDefault(); // blocca submit
-    }
+    if (!valid) event.preventDefault();
 });
-
 </script>
 @endsection

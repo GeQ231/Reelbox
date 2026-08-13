@@ -6,7 +6,7 @@
 @endsection
 
 @section('content')
-<div class="profile-container color_rect ">
+<div class="profile-container color_rect">
     <h1 class="profile-title title">Profilo Utente</h1>
 
     <div class="profile-info">
@@ -14,9 +14,10 @@
         <p><strong>Email:</strong> {{ $user->email }}</p>
     </div>
 
+    {{-- PREFERENZE GENERI --}}
     <div class="preferences-section">
-        <button class="preferences-toggle data_search_button " onclick="togglePreferences()" aria-expanded="false" aria-controls="preferencesList">
-            Preferenze
+        <button class="preferences-toggle data_search_button" onclick="togglePreferences()" aria-expanded="false" aria-controls="preferencesList">
+            Generi preferiti
             <i id="arrowIcon" class="bi bi-chevron-down"></i>
         </button>
 
@@ -28,12 +29,20 @@
                     @endforeach
                 </ul>
             @else
-                <p class="no-preferences">Nessuna preferenza salvata.</p>
+                <p class="no-preferences">Nessuna preferenza salvata. Metti like ai contenuti!</p>
             @endif
         </div>
     </div>
 
-    <form method="POST" action="{{ route('logout') }}" style="background-color:#2d2d44;" >
+    {{-- LINK PREFERITI --}}
+    <div class="mt-3">
+        <a href="{{ route('favorites.index') }}" class="btn btn-outline-danger w-100">
+            <i class="bi bi-heart me-2"></i> I miei contenuti preferiti
+        </a>
+    </div>
+
+    {{-- LOGOUT --}}
+    <form method="POST" action="{{ route('logout') }}" style="background-color:#2d2d44;">
         @csrf
         <button type="submit" class="logout-btn data_delete_button">Logout</button>
     </form>
@@ -48,7 +57,6 @@ function togglePreferences() {
 
     const expanded = arrow.parentElement.getAttribute('aria-expanded') === 'true';
     arrow.parentElement.setAttribute('aria-expanded', !expanded);
-
     arrow.classList.toggle('rotate');
 }
 </script>

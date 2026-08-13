@@ -7,15 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up(): void
-    {
-        Schema::create('comments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('content_id')->constrained()->onDelete('cascade');
-            $table->text('body');
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('comments', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        // Per commenti sui film
+        $table->foreignId('content_id')->nullable()->constrained()->onDelete('cascade');
+        // Per commenti sui post del forum
+        $table->foreignId('post_id')->nullable()->constrained()->onDelete('cascade');
+        $table->text('body');
+        $table->timestamps();
+    });
+}
 
     public function down(): void
     {

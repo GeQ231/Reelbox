@@ -9,24 +9,27 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+ public function up(): void
 {
     Schema::create('posts', function (Blueprint $table) {
         $table->id();
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->foreignId('tag_id')->constrained()->onDelete('cascade');
         $table->string('titolo');
         $table->text('contenuto');
+        $table->foreignId('tag_id')->constrained('tags')->onDelete('cascade');
         $table->timestamps();
+    });
+
+    Schema::create('like_post', function (Blueprint $table) {
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->foreignId('post_id')->constrained()->onDelete('cascade');
+        $table->primary(['user_id', 'post_id']);
     });
 }
 
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('posts');
-    }
+public function down(): void
+{
+    Schema::dropIfExists('like_post');
+    Schema::dropIfExists('posts');
+}
 };

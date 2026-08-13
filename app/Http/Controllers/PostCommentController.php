@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
-use App\Models\CommentPost;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 
 class PostCommentController extends Controller
 {
@@ -15,41 +14,29 @@ class PostCommentController extends Controller
         $this->middleware('auth');
     }
 
-    // Salva un commento sul post
-   public function store(Request $request, Post $post)
-{
-    $request->validate([
-        'comment' => 'required|string|max:1000',
-    ]);
+    public function store(Request $request, Post $post)
+    {
+        $request->validate([
+            'comment' => 'required|string|max:1000',
+        ]);
 
+        $post->comments()->create([
+            'user_id' => Auth::id(),
+            'body'    => $request->comment,
+        ]);
+
+        return back()->with('success', 'Commento pubblicato!');
+    }
+
+    public function destroy(Comment $comment)
+{
     $user = Auth::user();
 
-    // Verifica che l'utente sia autenticato e presente nel DB
-    if (!$user || !$user->exists) {
-        return back()->with('error', 'Utente non valido o autenticato');
+    if ($user->id === $comment->user_id || $user->isAdmin()) {
+        $comment->delete();
+        return back()->with('success', 'Commento eliminato.'); // ✅ redirect, non JSON
     }
 
-    // Ora puoi creare il commento
-    $post->comments()->create([
-        'user_id' => $user->id,
-        'comment' => $request->comment,
-    ]);
-
-    return back()->with('success', 'Commento pubblicato!');
+    abort(403, 'Non autorizzato');
 }
-
-
-
-    // Cancella un commento (solo autore o admin, puoi personalizzare)
-    public function destroy(CommentPost $comment)
-    {
-        $user = Auth::user();
-
-        if ($user->id === $comment->user_id  || $user->isAdmin() ) {
-            $comment->delete();
-            return back()->with('success', 'Commento eliminato.');
-        }
-
-        abort(403, 'Non autorizzato');
-    }
 }

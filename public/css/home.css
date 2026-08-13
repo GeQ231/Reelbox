@@ -1,68 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
 
-
-/*contenitore piu esterno della card del film/serieTv */
+/* ============ CARD FILM ============ */
 #film-card {
-  position: relative;
-  border-radius: 0.25rem;
-  padding: 1.5rem;
-  min-height: 60vh;
-  overflow: hidden;
-  color: white;
-  background-color: #222;
+    position: relative;
+    border-radius: 8px;
+    padding: 1.5rem;
+    min-height: 60vh;
+    overflow: hidden;
+    background: #0d0d1a;
+    border: 1px solid rgba(0, 230, 246, 0.3);
+    box-shadow: 0 0 30px rgba(0, 230, 246, 0.1);
+    animation: fadeInUp 0.6s ease forwards;
+    transition: all 0.3s ease;
 }
 
-/*sfondo sfocato blurrato del film/SerieTv*/
+#film-card:hover {
+    border-color: rgba(0, 230, 246, 0.6);
+    box-shadow: 0 0 50px rgba(0, 230, 246, 0.2);
+}
+
 #film-card-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: blur(15px);
-  opacity: 0.3;
-  z-index: 0;
-  border-radius: 0.25rem;
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px);
+    opacity: 0.15;
+    z-index: 0;
+    transition: all 0.5s ease;
 }
 
-/*stile dei contenuti all interno della card */
+#film-card:hover #film-card-bg {
+    opacity: 0.25;
+}
+
 #film-card-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: row;
-  gap: 1.5rem;
-  height: 100%;
-  align-items: stretch;
-  color: white;
-  text-shadow: 0 0 4px rgba(0,0,0,0.8);
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: stretch;
+    color: white;
 }
 
-/*copertina del film */
+/* ============ TITOLO FILM ============ */
+#film-titolo {
+    font-family: 'Orbitron', monospace;
+    color: #00e6f6;
+    text-shadow: 0 0 10px #00e6f6;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    animation: fadeInLeft 0.5s ease forwards;
+}
 
+/* ============ DESCRIZIONE ============ */
+#film-descrizione {
+    color: rgba(224, 224, 255, 0.8);
+    line-height: 1.7;
+    font-size: 1rem;
+    animation: fadeInUp 0.7s ease forwards;
+}
+
+/* ============ LIKE E COMMENTI ============ */
+#film-like,
+#film-commenti {
+    color: rgba(224, 224, 255, 0.7);
+    transition: all 0.3s ease;
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#film-like:hover {
+    color: #cf30aa;
+    text-shadow: 0 0 10px #cf30aa;
+}
+
+#film-commenti:hover {
+    color: #00e6f6;
+    text-shadow: 0 0 10px #00e6f6;
+}
+
+/* ============ IMMAGINE ============ */
 #film-immagine {
-  max-height: 100%;
-  width: auto;
-  object-fit: contain;
-  flex-shrink: 0;
-  border-radius: 0.25rem;
-  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(0, 230, 246, 0.3);
+    border: 1px solid rgba(0, 230, 246, 0.2);
+    transition: all 0.5s ease;
 }
 
-
-.search_zone_item {
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 12px;
-  box-sizing: border-box;
-  margin: 0;
-  border-radius: 4px;
-  font-size: 1rem;
-  line-height: 1; /* Importante: evita differenze verticali */
+#film-immagine:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 30px rgba(0, 230, 246, 0.5);
 }
 
-.search_zone_item {
-  height:2.5;
+/* ============ BOTTONE NEXT ============ */
+#nextBtn {
+    font-family: 'Orbitron', monospace !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 3px !important;
+    text-transform: uppercase !important;
+    padding: 12px 30px !important;
+    background: transparent !important;
+    border: 2px solid #00e6f6 !important;
+    color: #00e6f6 !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease !important;
 }
 
+#nextBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent, rgba(0, 230, 246, 0.2), transparent);
+    transition: all 0.3s ease;
+}
 
+#nextBtn:hover {
+    background: rgba(0, 230, 246, 0.1) !important;
+    box-shadow: 0 0 20px #00e6f6, 0 0 40px #00e6f6 !important;
+    transform: translateY(-3px) !important;
+}
+
+#nextBtn:hover::before {
+    left: 100%;
+}
+
+/* ============ SEARCH FORM ============ */
+#search-form {
+    background: rgba(13, 13, 26, 0.8) !important;
+    border: 1px solid rgba(0, 230, 246, 0.3) !important;
+    border-radius: 8px !important;
+    padding: 15px !important;
+    backdrop-filter: blur(10px);
+}
+
+/* ============ FILTRI ============ */
+#filtroCollapse {
+    background: rgba(10, 10, 20, 0.9);
+    border: 1px solid rgba(0, 230, 246, 0.2) !important;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* ============ ANIMAZIONI ============ */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* ============ MODAL COMMENTI ============ */
+.modal-dialog {
+    animation: fadeInUp 0.3s ease forwards;
+}

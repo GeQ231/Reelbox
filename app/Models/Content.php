@@ -10,15 +10,10 @@ class Content extends Model
 
     // ✅ FIX - nomi colonne corretti dal DB
     protected $fillable = [
-        'titolo',
-        'categoria',
-        'descrizione', // ✅ era 'trama'
-        'poster',      // ✅ era 'image'
-        'trailer_url', // ✅ aggiunto
-        'regista',
-        'anno',
-        'created_at',
-        'updated_at'
+    'user_id',
+    'content_id',
+    'post_id',
+    'body',
     ];
 
     public function scopeFilms($query)
@@ -47,8 +42,9 @@ class Content extends Model
         return $this->belongsToMany(Tag::class);
     }
 
+    // Deve avere questo:
     public function comments()
     {
-        return $this->hasMany(\App\Models\Comment::class);
+        return $this->hasMany(Comment::class);
     }
 }

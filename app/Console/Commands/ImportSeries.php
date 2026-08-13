@@ -1,73 +1,90 @@
 <?php
-namespace App\Console\Commands;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Content;
-use App\Models\Tag;
 
-class ImportMovies extends Command
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use App\Models\Tag;
+use Illuminate\Support\Facades\DB;
+
+class ImportSeries extends Command
 {
-    protected $signature = 'import:movies';
-    protected $description = 'Import di film da csv';
+    protected $signature = 'import:series';
+    protected $description = 'Import serie TV da Netflix CSV';
 
     public function handle()
     {
-        $path = storage_path('movies.csv');
+        $path = storage_path('app/netflix_titles.csv');
 
         if (!file_exists($path)) {
-            $this->error("File not found at $path");
+            $this->error("File non trovato: $path");
             return 1;
         }
 
-        $file = fopen($path, 'r');
-        $header = fgetcsv($file); // lettura headers
+        $lines  = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $header = str_getcsv(array_shift($lines));
+        $count  = 0;
 
-        while ($row = fgetcsv($file)) {
+        $this->info("Inizio importazione...");
+
+        foreach ($lines as $line) {
+            $row = str_getcsv($line);
+
+            if (count($row) !== count($header)) continue;
+
             $data = array_combine($header, $row);
 
-            $title = $data['Title'] ?? null;
-            $year = $data['Year'] ?? null;
-            $director = $data['Directors'] ?? null;
-            $genresString = $data['Genres'] ?? null;
+            $type = trim($data['type'] ?? '');
+            if ($type !== 'TV Show') continue;
 
-            if (!$title || !$year || !$director || !$genresString) {
-                continue;
-            }
+            $title = trim($data['title'] ?? '');
+            if (empty($title)) continue;
 
-            // Crea l'entry del contenuto 
-            $content = Content::create([
-                'titolo' => $title,
-                'anno' => $year,
-                'regista' => $director,
-            ]);
+            $year   = trim($data['release_year'] ?? '');
+            $genres = trim($data['listed_in']    ?? '');
+            $desc   = trim($data['description']  ?? '');
 
-            // Processa e inserisce i generi 
-            
-            $genres = explode(',', $genresString);
-            $genreIds = [];
+            try {
+                // ✅ Insert diretto nel DB senza Eloquent
+                $contentId = DB::table('contents')->insertGetId([
+                    'titolo'     => $title,
+                    'anno'       => $year ?: null,
+                    'categoria'  => 'serie_tv',
+                    'descrizione' => $desc ?: null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            
-
-                    foreach ($genres as $genreName) {
+                if ($genres && $contentId) {
+                    foreach (explode(',', $genres) as $genreName) {
                         $genreName = trim($genreName);
                         if (empty($genreName)) continue;
 
-                        // ✅ Normalizza il genere
+                        // ✅ Aggiungi questa riga!
                         $genreName = $this->normalizzaGenere($genreName);
 
                         $tag = Tag::firstOrCreate(
                             ['name' => $genreName],
                             ['description' => "Genere $genreName"]
                         );
-                        $genreIds[] = $tag->id;
-                    }
 
-            if (!empty($genreIds)) {
-                $content->tags()->attach($genreIds);
+                        // ✅ Insert pivot diretto
+                        DB::table('content_tag')->insertOrIgnore([
+                            'content_id' => $contentId,
+                            'tag_id'     => $tag->id,
+                        ]);
+                    }
+                }
+
+                $count++;
+                $this->info("✅ $count - $title");
+
+            } catch (\Exception $e) {
+                $this->error("Errore su '$title': " . $e->getMessage());
+                continue;
             }
         }
-        fclose($file);
-        $this->info("Movies imported successfully.");
+
+        $this->info("✅ Completato! Importate $count serie TV.");
         return 0;
     }
     // Aggiungi questo metodo in entrambi i comandi
@@ -144,4 +161,3 @@ private function normalizzaGenere($genere): string
     return $mappa[trim($genere)] ?? trim($genere);
 }
 }
-

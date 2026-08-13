@@ -11,78 +11,79 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\PostLikeController;
 use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\CommentController;
-use Illuminate\Support\Facades\Log;
 
-
-// Rotte principali
+// ============ PRINCIPALI ============
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/profile', [UserController::class, 'profile'])->name('profile');
 Route::get('/preferences', [UserController::class, 'showPreferences'])->name('preferences');
 Route::get('/contents/{content}', [ContentController::class, 'show'])->name('films.show');
 
-//Rotte per gestione di preferiti con middleware per ajax
-Route::post('/favorites/toggle/{id}', [FavoriteController::class, 'toggle'])
-    ->middleware('auth')
-    ->name('favorites.toggle');
-
-
-// Login & Logout
+// ============ AUTH ============
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
-
-// Registrazione
 Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [UserController::class, 'register']);
 
-// Feed
+// ============ FEED & SEARCH ============
 Route::get('/search', [FeedController::class, 'search'])->name('search');
-Route::post('/like/{id}', [LikeController::class, 'toggle']);
 Route::get('/api/tags', [FeedController::class, 'getTags']);
 
- //gestione like
-
-// Forum - rotte pubbliche
-
+// ============ FORUM ============
 Route::prefix('forum')->group(function () {
     Route::get('/', [ForumController::class, 'index'])->name('forum.index');
     Route::get('/{tag}', [ForumController::class, 'show'])->name('forum.show');
-    Route::post('/{tag}/post', [ForumController::class, 'storePost'])->middleware('auth')->name('forum.post');
+    Route::post('/{tag}/post', [ForumController::class, 'storePost'])
+        ->middleware('auth')
+        ->name('forum.post');
 });
 
+Route::delete('/forum/posts/{post}', [ForumController::class, 'destroyPost'])
+    ->middleware('auth')
+    ->name('forum.posts.destroy');
 
-// Forum - rotte protette da autenticazione
-Route::middleware('auth')->group(function () {
-    Route::post('/forum/{category:slug}/posts', [ForumController::class, 'storePost'])->name('forum.posts.store');
-});
+// ============ LIKE SUI POST DEL FORUM ============
+Route::post('/posts/{post}/like', [PostLikeController::class, 'toggle'])
+    ->middleware('auth')
+    ->name('posts.like');
 
-//Eliminare post da forum
-Route::delete('/forum/posts/{post}', [ForumController::class, 'destroyPost'])->middleware('auth')->name('forum.posts.destroy');
+// ============ COMMENTI SUI POST DEL FORUM ============
+Route::post('/posts/{post}/comments', [PostCommentController::class, 'store'])
+    ->middleware('auth')
+    ->name('posts.comments.store');
 
-// Like
-Route::post('/like/{post}', [PostLikeController::class, 'toggle'])->name('posts.like')->middleware('auth');
+Route::delete('/posts/comments/{comment}', [PostCommentController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('posts.comments.destroy');
 
-    
+// ============ LIKE SUI FILM ============
+Route::post('/contents/{id}/like', [LikeController::class, 'toggle'])
+    ->middleware('auth')
+    ->name('like.toggle');
 
-// Commenti
-Route::post('/posts/{post}/comments', [PostCommentController::class, 'store'])->name('posts.comments.store');
-Route::delete('/comments/{comment}', [PostCommentController::class, 'destroy'])->name('comments.destroy');
-    
-//Commenti sui film
-// Per ottenere i commenti di un contenuto
-Route::get('/comments/{id}', [CommentController::class, 'index']);
+// ============ COMMENTI SUI FILM ============
+Route::get('/comments/{id}', [CommentController::class, 'index'])
+    ->name('comments.index');
 
-// Per inviare un nuovo commento
-Route::post('/comments/{id}', [CommentController::class, 'store']);
+Route::post('/comments/{id}', [CommentController::class, 'store'])
+    ->middleware('auth')
+    ->name('comments.store');
 
-// Per eliminare un commento
-Route::middleware(['auth', 'admin'])->delete('/admin/comments/{id}', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
+Route::delete('/contents/comments/{comment}', [CommentController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('comments.destroy');
 
-//Route per eliminazione di altro utente 
+// ============ PREFERITI ============
+Route::post('/favorites/toggle/{id}', [FavoriteController::class, 'toggle'])
+    ->middleware('auth')
+    ->name('favorites.toggle');
+Route::get('/favorites', [FavoriteController::class, 'index'])
+    ->middleware('auth')
+    ->name('favorites.index');
+
+// ============ ADMIN ============
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/users', [UserController::class, 'adminUsers'])->name('admin.users.index');
     Route::delete('/admin/users/{user}', [UserController::class, 'destroyUser'])->name('admin.users.destroy');
+    Route::delete('/admin/comments/{comment}', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
 });
-
-
-;

@@ -6,8 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class LikePost extends Model
 {
-    protected $table = 'like_post'; // o 'like_posts' se così si chiama la tabella
+    protected $table = 'like_post';
+    
+    public $timestamps = false;
 
-    protected $fillable = ['user_id', 'post_id'];
-
+    protected $fillable = [
+        'user_id',
+        'post_id',
+    ];
 }
